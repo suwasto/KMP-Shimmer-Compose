@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -22,41 +23,47 @@ import androidx.compose.ui.graphics.graphicsLayer
 @Composable
 fun ShimmerContainer(
     modifier: Modifier = Modifier,
-    shimmerColor: Color = Color.White.copy(alpha = 0.35f),
-    backgroundColor: Color = Color.LightGray.copy(alpha = 0.35f),
-    durationMillis: Int = 1500,
+    isLoading: Boolean = LocalShimmerLoading.current,
     content: @Composable () -> Unit
 ) {
-    val transition = rememberInfiniteTransition()
+    val theme = LocalShimmerTheme.current
+    val transition = if (isLoading) rememberInfiniteTransition() else null
 
-    val shimmerX by transition.animateFloat(
+    val shimmerX by (transition?.animateFloat(
         initialValue = -2f,
         targetValue = 2f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis, easing = LinearEasing),
+            animation = tween(theme.durationMillis, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         )
-    )
+    ) ?: remember { mutableStateOf(0f) })
 
-    val brush = remember(shimmerX) {
-        Brush.linearGradient(
-            colors = listOf(backgroundColor, shimmerColor, backgroundColor),
-            start = Offset.Zero,
-            end = Offset(shimmerX * 600f, shimmerX * 600f) // smooth diagonal sweep
-        )
+    val brush = remember(shimmerX, isLoading) {
+        if (isLoading) {
+            Brush.linearGradient(
+                colors = listOf(theme.backgroundColor, theme.shimmerColor, theme.backgroundColor),
+                start = Offset.Zero,
+                end = Offset(shimmerX * 600f, shimmerX * 600f)
+            )
+        } else null
     }
 
     Box(
         modifier = modifier
-            .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
-            .drawWithContent {
-                drawContent()
-                // Apply shimmer only where children have pixels
-                drawRect(
-                    brush = brush,
-                    blendMode = BlendMode.SrcAtop
-                )
-            }
+            .then(
+                if (isLoading) Modifier
+                    .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+                    .drawWithContent {
+                        drawContent()
+                        brush?.let {
+                            drawRect(
+                                brush = it,
+                                blendMode = BlendMode.SrcAtop
+                            )
+                        }
+                    }
+                else Modifier
+            )
     ) {
         content()
     }

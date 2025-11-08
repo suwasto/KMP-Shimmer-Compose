@@ -37,8 +37,7 @@ android {
 }
 
 dependencies {
-//    implementation(projects.shared)
-    implementation(projects.kmmComposeShimmer)
+    implementation(projects.shared)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)

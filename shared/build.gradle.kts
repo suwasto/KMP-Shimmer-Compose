@@ -39,6 +39,9 @@ kotlin {
             //put your multiplatform dependencies here
             implementation(projects.kmmComposeShimmer)
             implementation(compose.components.resources)
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
