@@ -1,0 +1,15 @@
+*.iml
+.gradle
+.idea
+.DS_Store
+build
+captures
+.externalNativeBuild
+.cxx
+local.properties
+xcuserdata
+androidApp/build
+shared/.gradle
+shared/build
+KmmComposeShimmer/build
+.kotlin
