@@ -13,3 +13,4 @@ shared/.gradle
 shared/build
 KmmComposeShimmer/build
 .kotlin
+gradle.properties

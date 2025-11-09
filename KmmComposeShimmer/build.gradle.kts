@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
+    id("com.vanniktech.maven.publish") version "0.34.0"
 }
 
 kotlin {
@@ -14,7 +15,7 @@ kotlin {
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
         namespace = "io.github.suwasto.kmmcomposeshimmer"
-        compileSdk = 35
+        compileSdk = 36
         minSdk = 24
 
         withHostTestBuilder {
@@ -103,3 +104,44 @@ kotlin {
     }
 
 }
+
+mavenPublishing {
+
+    coordinates(
+        groupId = "io.github.suwasto",
+        artifactId = "kmp-shimmer-compose",
+        version = "1.0.0"
+    )
+
+    pom {
+        name.set("Kotlin Multiplatform Shimmer Library for Jetpack Compose")
+        description.set("KMP Shimmer Compose is a library in Jetpack Compose that wraps any content and automatically applies a shimmer animation to it.")
+        url.set("https://github.com/suwasto/KMP-Shimmer-Compose")
+
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+
+        developers {
+            developer {
+                id.set("suwasto")
+                name.set("Anang Suwasto")
+                email.set("suwasto.anang@gmail.com")
+            }
+        }
+
+        scm {
+            connection.set("scm:git:git://github.com/suwasto/KMP-Shimmer-Compose.git")
+            developerConnection.set("scm:git:ssh://github.com/suwasto/KMP-Shimmer-Compose.git")
+            url.set("https://github.com/suwasto/KMP-Shimmer-Compose")
+        }
+    }
+
+    publishToMavenCentral()
+
+    signAllPublications()
+}
+
